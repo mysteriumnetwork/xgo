@@ -1,4 +1,4 @@
-FROM mysteriumnetwork/xgo:base
+FROM mysteriumnetwork/xgo:winbase
 
 # Configure the root Go distribution and bootstrap based on it
 ENV GO_VERSION 1136
