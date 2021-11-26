@@ -2,7 +2,7 @@
 set -e
 
 # List of comma separated targets.
-TARGETS="linux/amd64,darwin/amd64,darwin/arm64,windows/amd64"
+TARGETS="linux/arm,linux/arm64,linux/amd64,darwin/amd64,darwin/arm64,windows/amd64"
 
 docker run --rm \
     -v "$PWD"/build:/build \
