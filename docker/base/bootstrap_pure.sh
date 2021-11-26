@@ -30,6 +30,9 @@ export GOROOT_BOOTSTRAP=$GOROOT
 echo "Bootstrapping linux/386..."
 GOOS=linux GOARCH=386 CGO_ENABLED=1 go install std
 
+echo "Bootstrapping linux/arm..."
+GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=1 CC=arm-linux-gnueabihf-gcc-9 CGO_CFLAGS="-march=armv7-a" go install std
+
 echo "Bootstrapping linux/arm64..."
 GOOS=linux GOARCH=arm64 CGO_ENABLED=1 CC=aarch64-linux-gnu-gcc-9 go install std
 
