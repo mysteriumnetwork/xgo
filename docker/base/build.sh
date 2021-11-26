@@ -107,53 +107,15 @@ for TARGET in ${TARGETS//,/ }; do
     HOST=i686-linux PREFIX=/usr/local $BUILD_DEPS /deps ${DEPS_ARGS[@]}
     GOOS=linux GOARCH=386 CGO_ENABLED=1 go build $V $X $TP $MOD "${T[@]}" --ldflags="$V $LD" $BM -o "/build/$NAME-linux-386`extension linux`" $PACK_RELPATH
   fi
-  if ([ $XGOOS == "." ] || [ $XGOOS == "linux" ]) && ([ $XGOARCH == "." ] || [ $XGOARCH == "arm" ] || [ $XGOARCH == "arm-5" ]); then
-    if [ "$GO_VERSION" -ge 150 ]; then
-      echo "Bootstrapping linux/arm-5..."
-      CC=arm-linux-gnueabi-gcc-9 GOOS=linux GOARCH=arm GOARM=5 CGO_ENABLED=1 CGO_CFLAGS="-march=armv5" CGO_CXXFLAGS="-march=armv5" go install std
-    fi
-    echo "Compiling for linux/arm-5..."
-    CC=arm-linux-gnueabi-gcc-9 CXX=arm-linux-gnueabi-g++-9 HOST=arm-linux-gnueabi PREFIX=/usr/arm-linux-gnueabi CFLAGS="-march=armv5" CXXFLAGS="-march=armv5" $BUILD_DEPS /deps ${DEPS_ARGS[@]}
-    export PKG_CONFIG_PATH=/usr/arm-linux-gnueabi/lib/pkgconfig
-
-    CC=arm-linux-gnueabi-gcc-9 CXX=arm-linux-gnueabi-g++-9 GOOS=linux GOARCH=arm GOARM=5 CGO_ENABLED=1 CGO_CFLAGS="-march=armv5" CGO_CXXFLAGS="-march=armv5" go build $V $X $TP $MOD "${T[@]}" --ldflags="$V $LD" $BM -o "/build/$NAME-linux-arm-5`extension linux`" $PACK_RELPATH
-    if [ "$GO_VERSION" -ge 150 ]; then
-      echo "Cleaning up Go runtime for linux/arm-5..."
-      rm -rf /usr/local/go/pkg/linux_arm
-    fi
-  fi
-  if ([ $XGOOS == "." ] || [ $XGOOS == "linux" ]) && ([ $XGOARCH == "." ] || [ $XGOARCH == "arm-6" ]); then
-    if [ "$GO_VERSION" -lt 150 ]; then
-      echo "Go version too low, skipping linux/arm-6..."
-    else
-      echo "Bootstrapping linux/arm-6..."
-      CC=arm-linux-gnueabi-gcc-9 GOOS=linux GOARCH=arm GOARM=6 CGO_ENABLED=1 CGO_CFLAGS="-march=armv6" CGO_CXXFLAGS="-march=armv6" go install std
-
-      echo "Compiling for linux/arm-6..."
-      CC=arm-linux-gnueabi-gcc-9 CXX=arm-linux-gnueabi-g++-9 HOST=arm-linux-gnueabi PREFIX=/usr/arm-linux-gnueabi CFLAGS="-march=armv6" CXXFLAGS="-march=armv6" $BUILD_DEPS /deps ${DEPS_ARGS[@]}
-      export PKG_CONFIG_PATH=/usr/arm-linux-gnueabi/lib/pkgconfig
-
-      CC=arm-linux-gnueabi-gcc-9 CXX=arm-linux-gnueabi-g++-9 GOOS=linux GOARCH=arm GOARM=6 CGO_ENABLED=1 CGO_CFLAGS="-march=armv6" CGO_CXXFLAGS="-march=armv6" go build $V $X $TP $MOD "${T[@]}" --ldflags="$V $LD" $BM -o "/build/$NAME-linux-arm-6`extension linux`" $PACK_RELPATH
-
-      echo "Cleaning up Go runtime for linux/arm-6..."
-      rm -rf /usr/local/go/pkg/linux_arm
-    fi
-  fi
-  if ([ $XGOOS == "." ] || [ $XGOOS == "linux" ]) && ([ $XGOARCH == "." ] || [ $XGOARCH == "arm-7" ]); then
+  if ([ $XGOOS == "." ] || [ $XGOOS == "linux" ]) && ([ $XGOARCH == "." ] || [ $XGOARCH == "arm" ] || [ $XGOARCH == "arm-7" ]); then
     if [ "$GO_VERSION" -lt 150 ]; then
       echo "Go version too low, skipping linux/arm-7..."
     else
-      echo "Bootstrapping linux/arm-7..."
-      CC=arm-linux-gnueabihf-gcc-9 GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=1 CGO_CFLAGS="-march=armv7-a" CGO_CXXFLAGS="-march=armv7-a" go install std
-
       echo "Compiling for linux/arm-7..."
       CC=arm-linux-gnueabihf-gcc-9 CXX=arm-linux-gnueabihf-g++-9 HOST=arm-linux-gnueabihf PREFIX=/usr/arm-linux-gnueabihf CFLAGS="-march=armv7-a -fPIC" CXXFLAGS="-march=armv7-a -fPIC" $BUILD_DEPS /deps ${DEPS_ARGS[@]}
       export PKG_CONFIG_PATH=/usr/arm-linux-gnueabihf/lib/pkgconfig
 
       CC=arm-linux-gnueabihf-gcc-9 CXX=arm-linux-gnueabihf-g++-9 GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=1 CGO_CFLAGS="-march=armv7-a -fPIC" CGO_CXXFLAGS="-march=armv7-a -fPIC" go build $V $X $TP $MOD "${T[@]}" --ldflags="$V $LD" $BM -o "/build/$NAME-linux-arm-7`extension linux`" $PACK_RELPATH
-
-      echo "Cleaning up Go runtime for linux/arm-7..."
-      rm -rf /usr/local/go/pkg/linux_arm
     fi
   fi
   if ([ $XGOOS == "." ] || [ $XGOOS == "linux" ]) && ([ $XGOARCH == "." ] || [ $XGOARCH == "arm64" ]); then
