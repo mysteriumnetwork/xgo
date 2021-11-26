@@ -3,7 +3,7 @@
 #
 # Released under the MIT license.
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 MAINTAINER Péter Szilágyi <peterke@gmail.com>
 
@@ -19,56 +19,43 @@ RUN chmod +x $FETCH
 # Make sure apt-get is up to date and dependent packages are installed
 RUN \
   apt-get update && \
-  apt-get install -y automake autogen build-essential ca-certificates                    \
-    gcc-5-arm-linux-gnueabi g++-5-arm-linux-gnueabi libc6-dev-armel-cross                \
-    gcc-5-arm-linux-gnueabihf g++-5-arm-linux-gnueabihf libc6-dev-armhf-cross            \
-    gcc-5-aarch64-linux-gnu g++-5-aarch64-linux-gnu libc6-dev-arm64-cross                \
-    gcc-5-mips-linux-gnu g++-5-mips-linux-gnu libc6-dev-mips-cross                       \
-    gcc-5-mipsel-linux-gnu g++-5-mipsel-linux-gnu libc6-dev-mipsel-cross                 \
-    gcc-5-mips64-linux-gnuabi64 g++-5-mips64-linux-gnuabi64 libc6-dev-mips64-cross       \
-    gcc-5-mips64el-linux-gnuabi64 g++-5-mips64el-linux-gnuabi64 libc6-dev-mips64el-cross \
-    gcc-5-multilib g++-5-multilib gcc-mingw-w64 g++-mingw-w64 clang llvm-dev             \
-    gcc-6-arm-linux-gnueabi g++-6-arm-linux-gnueabi libc6-dev-armel-cross                \
-    gcc-6-arm-linux-gnueabihf g++-6-arm-linux-gnueabihf libc6-dev-armhf-cross            \
-    gcc-6-aarch64-linux-gnu g++-6-aarch64-linux-gnu libc6-dev-arm64-cross                \
-    gcc-6-mips-linux-gnu g++-6-mips-linux-gnu libc6-dev-mips-cross                       \
-    gcc-6-mipsel-linux-gnu g++-6-mipsel-linux-gnu libc6-dev-mipsel-cross                 \
-    gcc-6-mips64-linux-gnuabi64 g++-6-mips64-linux-gnuabi64 libc6-dev-mips64-cross       \
-    gcc-6-mips64el-linux-gnuabi64 g++-6-mips64el-linux-gnuabi64 libc6-dev-mips64el-cross \
-    gcc-6-multilib gcc-7-multilib g++-6-multilib gcc-mingw-w64 g++-mingw-w64 clang llvm-dev \
-    libtool libxml2-dev uuid-dev libssl-dev swig openjdk-8-jdk pkg-config patch \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y                                      \
+    automake autogen build-essential ca-certificates                                     \
+    gcc-9-arm-linux-gnueabi g++-9-arm-linux-gnueabi libc6-dev-armel-cross                \
+    gcc-9-arm-linux-gnueabihf g++-9-arm-linux-gnueabihf libc6-dev-armhf-cross            \
+    gcc-9-aarch64-linux-gnu g++-9-aarch64-linux-gnu libc6-dev-arm64-cross                \
+    gcc-9-mips-linux-gnu g++-9-mips-linux-gnu libc6-dev-mips-cross                       \
+    gcc-9-mipsel-linux-gnu g++-9-mipsel-linux-gnu libc6-dev-mipsel-cross                 \
+    gcc-9-mips64-linux-gnuabi64 g++-9-mips64-linux-gnuabi64 libc6-dev-mips64-cross       \
+    gcc-9-mips64el-linux-gnuabi64 g++-9-mips64el-linux-gnuabi64 libc6-dev-mips64el-cross \
+    gcc-9-multilib g++-9-multilib gcc-mingw-w64 g++-mingw-w64 clang llvm-dev             \
+    libtool libxml2-dev uuid-dev libssl-dev swig openjdk-8-jdk pkg-config patch          \
     make xz-utils cpio wget zip unzip p7zip git mercurial bzr texinfo help2man cmake     \
+    zlib1g-dev                                                                           \
     --no-install-recommends
 
 # Fix any stock package issues
 RUN ln -s /usr/include/asm-generic /usr/include/asm
-
-# Add patches directory for patching later
-ADD patches /patches
 
 ##########################
 # Darwin Toolchain build #
 ##########################
 
 # Configure the container for OSX cross compilation
-ENV OSX_SDK MacOSX10.11.sdk
-ENV OSX_SDK_PATH https://s3.dockerproject.org/darwin/v2/$OSX_SDK.tar.xz
+ENV OSX_SDK_VER 11.3
+ENV OSX_SDK MacOSX${OSX_SDK_VER}.sdk
+ENV OSX_SDK_PATH https://github.com/phracker/MacOSX-SDKs/releases/download/${OSX_SDK_VER}/$OSX_SDK.tar.xz
 
 # Make libxar known to the ld64 and cctools build
 ENV LD_LIBRARY_PATH=/osxcross/target/lib
 
 # Download the osx sdk and build the osx toolchain
-# We download the osx sdk, patch it and pack it again to be able to throw the patched version at osxcross
-RUN \
-  $FETCH $OSX_SDK_PATH dd228a335194e3392f1904ce49aff1b1da26ca62 && \
-  tar -xf `basename $OSX_SDK_PATH` && rm -f `basename $OSX_SDK_PATH`
-ADD patch.tar.xz $OSX_SDK/usr/include/c++
-RUN tar -cf - $OSX_SDK/ | xz -c - > $OSX_SDK.tar.xz && rm -rf $OSX_SDK
+RUN $FETCH $OSX_SDK_PATH b9f134a1b89df10a4b680f9d6f81ad5579062dcb
 
 # Actually build the toolchain
 RUN \
   git clone https://github.com/tpoechtrager/osxcross.git && \
-  cd osxcross && git checkout 88cb6e8d0d7675cae7c8a2d66c11f58237101df0 && cd ../ && \
+  cd osxcross && git checkout d904031e7e3faa8a23c21b319a65cc915dac51b3 && cd ../ && \
   mv  $OSX_SDK.tar.xz /osxcross/tarballs/ && \
   OSX_VERSION_MIN=10.10 UNATTENDED=1 LD_LIBRARY_PATH=/osxcross/target/lib /osxcross/build.sh
 
