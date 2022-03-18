@@ -14,7 +14,7 @@ docker run --rm \
     -e FLAG_RACE=false \
     -e FLAG_LDFLAGS="-s -w" \
     -e TARGETS=$TARGETS \
-    mysteriumnetwork/xgo:1.17.3 ./tests/embedded_c/.
+    mysteriumnetwork/xgo:1.18.0 ./tests/embedded_c/.
 
 docker run --rm \
     -v "$PWD"/build:/build \
@@ -26,4 +26,4 @@ docker run --rm \
     -e FLAG_RACE=false \
     -e FLAG_BUILDMODE=default \
     -e TARGETS=$TARGETS \
-    mysteriumnetwork/xgo:1.17.3 ./tests/embedded_cpp/.
+    mysteriumnetwork/xgo:1.18.0 ./tests/embedded_cpp/.
