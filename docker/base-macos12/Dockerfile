@@ -25,14 +25,16 @@ RUN \
     gcc-9-mipsel-linux-gnu g++-9-mipsel-linux-gnu libc6-dev-mipsel-cross                 \
     gcc-9-mips64-linux-gnuabi64 g++-9-mips64-linux-gnuabi64 libc6-dev-mips64-cross       \
     gcc-9-mips64el-linux-gnuabi64 g++-9-mips64el-linux-gnuabi64 libc6-dev-mips64el-cross \
-    gcc-9-multilib g++-9-multilib gcc-mingw-w64 g++-mingw-w64 clang llvm-dev             \
+    gcc-9-multilib g++-9-multilib gcc-mingw-w64 g++-mingw-w64 clang-12 llvm-12-dev       \
     libtool libxml2-dev uuid-dev libssl-dev swig openjdk-8-jdk pkg-config patch          \
     make xz-utils cpio wget zip unzip p7zip git mercurial bzr texinfo help2man cmake     \
     zlib1g-dev                                                                           \
     --no-install-recommends
 
 # Fix any stock package issues
-RUN ln -s /usr/include/asm-generic /usr/include/asm
+RUN ln -s /usr/include/asm-generic /usr/include/asm && \
+  ln -sf /usr/bin/clang-12 /usr/local/bin/clang && \
+  ln -sf /usr/bin/clang++-12 /usr/local/bin/clang++
 
 ##########################
 # Darwin Toolchain build #
