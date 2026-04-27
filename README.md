@@ -30,6 +30,13 @@ docker build -t mysteriumnetwork/xgo:base -f ./docker/base/Dockerfile ./docker/b
 docker push mysteriumnetwork/xgo:base
 ```
 
+Go 1.25+ Darwin builds need the newer macOS 12 SDK base image.
+
+```
+docker build -t mysteriumnetwork/xgo:base-macos12 -f ./docker/base-macos12/Dockerfile ./docker/base
+docker push mysteriumnetwork/xgo:base-macos12
+```
+
 If you add new go version only when build and push.
 
 Build new image.
