@@ -207,7 +207,7 @@ for TARGET in ${TARGETS//,/ }; do
     # Split the platform version and configure the deployment target
     PLATFORM=`echo $XGOOS | cut -d '-' -f 2`
     if [ "$PLATFORM" == "" ] || [ "$PLATFORM" == "." ] || [ "$PLATFORM" == "darwin" ]; then
-      PLATFORM=10.10 # OS X Yosemite
+      PLATFORM=${DEFAULT_MACOSX_DEPLOYMENT_TARGET:-10.10}
     fi
     export MACOSX_DEPLOYMENT_TARGET=$PLATFORM
 

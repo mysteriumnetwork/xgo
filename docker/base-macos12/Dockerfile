@@ -1,7 +1,4 @@
-# Go cross compiler (xgo): Base cross-compilation layer
-# Copyright (c) 2014 Péter Szilágyi. All rights reserved.
-#
-# Released under the MIT license.
+# Go cross compiler (xgo): Base cross-compilation layer for Go 1.25+
 
 FROM ubuntu:20.04
 
@@ -41,24 +38,25 @@ RUN ln -s /usr/include/asm-generic /usr/include/asm
 # Darwin Toolchain build #
 ##########################
 
-# Configure the container for OSX cross compilation
-ENV OSX_SDK_VER 11.3
+# Go 1.25+ references SecTrustCopyCertificateChain from Security.framework,
+# which is only present in the macOS 12+ SDKs.
+ENV OSX_SDK_VER 12.3
 ENV OSX_SDK MacOSX${OSX_SDK_VER}.sdk
-ENV OSX_SDK_PATH https://github.com/phracker/MacOSX-SDKs/releases/download/${OSX_SDK_VER}/$OSX_SDK.tar.xz
-ENV DEFAULT_MACOSX_DEPLOYMENT_TARGET 10.10
+ENV OSX_SDK_PATH https://github.com/joseluisq/macosx-sdks/releases/download/${OSX_SDK_VER}/$OSX_SDK.tar.xz
+ENV DEFAULT_MACOSX_DEPLOYMENT_TARGET 12.0
 
 # Make libxar known to the ld64 and cctools build
 ENV LD_LIBRARY_PATH=/osxcross/target/lib
 
 # Download the osx sdk and build the osx toolchain
-RUN $FETCH $OSX_SDK_PATH b9f134a1b89df10a4b680f9d6f81ad5579062dcb
+RUN $FETCH $OSX_SDK_PATH 3abd261ceb483c44295a6623fdffe5d44fc4ac2c872526576ec5ab5ad0f6e26c
 
 # Actually build the toolchain
 RUN \
   git clone https://github.com/tpoechtrager/osxcross.git && \
   cd osxcross && git checkout d904031e7e3faa8a23c21b319a65cc915dac51b3 && cd ../ && \
   mv  $OSX_SDK.tar.xz /osxcross/tarballs/ && \
-  OSX_VERSION_MIN=10.10 UNATTENDED=1 LD_LIBRARY_PATH=/osxcross/target/lib /osxcross/build.sh
+  OSX_VERSION_MIN=12.0 UNATTENDED=1 LD_LIBRARY_PATH=/osxcross/target/lib /osxcross/build.sh
 
 ENV PATH /osxcross/target/bin:$PATH
 
